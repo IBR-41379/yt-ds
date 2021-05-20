@@ -4,6 +4,7 @@ A script for searching youtube videos though terminal(with the help of youtube-s
 ## Requirement:
 
 1)Python3 or above(https://www.python.org)
+
 2)pip(https://pip.pypa.io/en/stable/quickstart/)
 
 ## Running the script:
