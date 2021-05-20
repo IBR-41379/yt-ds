@@ -13,6 +13,7 @@ A script for searching youtube videos though terminal(with the help of youtube-s
   ```
 3)Go to the directory:
   ```sh
+   cd ~/
    cd yt-ds
   ```
 4)Launch the script:
