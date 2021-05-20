@@ -9,7 +9,7 @@ A script for searching youtube videos though terminal(with the help of youtube-s
 1) Start a new terminal session.
 2) Clone this repository:
   ```sh
-   git clone https://github.com/IBR-41379/yt-ds ~/
+   git clone https://github.com/IBR-41379/yt-ds ~/yt-ds
   ```
 3)Go to the directory:
   ```sh
