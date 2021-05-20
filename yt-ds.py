@@ -1,29 +1,32 @@
 import os
 import json
-def is_tool(name):
-    """Check whether `name` is on PATH and marked as executable."""
-    # from whichcraft import which
-    from shutil import which
-    return which(name) is not None
+#def is_tool(name):
+    #"""Check whether `name` is on PATH and marked as executable."""
+    ## from whichcraft import which
+    #from shutil import which
+   # return which(name) is not None
 
 def dependency():
-    x=is_tool("youtube-dl")
+    x=os.popen('pip3 list | grep youtube-dl')
     z=os.popen('pip3 list | grep youtube-search-python')
     w=z.readlines()
-    if x==False:
-        m=input("youtubedl is missing from your system. Do you want to intsall it(y/n)")
+    v=x.readlines()
+
+    if len(v)==0:
+        m=input("youtube-dl is missing from your system. Do you want to intsall it(y/n)")
         if m == "y":
-            os.system("pip3 install youtube-dl")
+            os.system("pip3 install --upgrade youtube-dl")
         else:
             print("Ok, closing program")
             exit() 
     else:
         pass
+    
 
     if len(w)==0:
         m=input("youtube-search-python is missing from your system. Do you want to intsall it(y/n)")
         if m == "y":
-            os.system("pip3 install youtube-search-python")
+            os.system("pip3 install --upgrade youtube-search-python")
         else:
             print("Ok, closing program")
             exit() 
@@ -31,7 +34,7 @@ def dependency():
         pass
 
 def intro():
-    print("yt-ds\n(A script to make youtubedl simple)\nVersion: 0.25(beta)\n")
+    print("yt-ds\n(A script to make youtubedl simple)\nVersion: 0.3(beta)\n")
 
 
 intro()
@@ -182,13 +185,20 @@ def getextenstioninfo(v):
 
 
 def resolution(m):
+    videoInfo = Video.getInfo(m, mode = ResultMode.json)
+    x=videoInfo
+    zeb=x.replace('\n','')
+    ya=zeb.replace('    ','')
+    res = json.loads(ya)
+    j=res['title']
     z=getvidinfo(m)
     y=getsizeinfo(m)
     n=getformatinfo(m)
     s=getfpsinfo(m)
     t=getresinfo(m)
     u=getextenstioninfo(m)
-    print('Available resolutions are:')
+    print('\nVideo Name:',j)
+    print('\nAvailable resolutions are:')
     for d in z:
         if d=='160':
             if d in y:
@@ -464,6 +474,8 @@ def resolution(m):
         else:
             pass
 
+    print(len(z),':  Back to main menu')
+
 
 
 def getaudsizeinfo(v):
@@ -536,18 +548,32 @@ def audio(m):
         print(c,': ',n.get('251'),'        , webm,',y.get('251'))
     else:
         pass
+    
+    print(len(z),':   Back to video resolution')
 
 def vidcode(m):
-    a=int(input("Enter the number to choose resolution :"))
+    a=int(input("Enter the number to choose resolution or go back to previous page :"))
     z=getvidinfo(m)
-    c=z[a]
-    return c
+    if a == len(z):
+        mainprogram()
+    else:
+        c=z[a]
+        return c
 
 def audcode(m):
-    a=int(input("Enter the number to choose audio fotmat :"))
+    a=int(input("Enter the number to choose audio fotmat or go back to previous page :"))
     z=getaudinfo(m)
-    c=z[a]
-    return c
+    if a == len(z):
+        resolution(m)
+        q=vidcode(m)
+        print()
+        audio(m)
+        r=audcode(m)
+        print()
+        downloader(q,r,m)
+    else:
+        c=z[a]
+        return c
 
 def downloader(a,b,c):
     e=input("Enter download path :")
@@ -565,23 +591,33 @@ def downloader(a,b,c):
             while True:
                 os.chdir(e+'/'+k)
                 os.system('youtube-dl -f '+a+'+'+b+' '+c)
-                print('Press any button to exit')
-                input()
-                exit()
+                print('Press y to go to main menu or any button to exit')
+                inp=input(':')
+                if inp == 'y':
+                    mainprogram()
+                else:
+                    exit()
+        
         except FileNotFoundError:
             os.chdir(e)
             os.mkdir(k)
             os.chdir(e+'/'+k)
             os.system('youtube-dl -f '+a+'+'+b+' '+c)
-            print('Press any button to exit')
-            input()
-            exit()
+            print('Press y to go to main menu or any button to exit')
+            inp=input(':')
+            if inp == 'y':
+                mainprogram()
+            else:
+                exit()
     else:
         os.chdir(e)
         os.system('youtube-dl -f '+a+'+'+b+' '+c)
-        print('Press any button to exit')
-        input()
-        exit()
+        print('Press y to go to main menu or any button to exit')
+        inp=input(':')
+        if inp == 'y':
+            mainprogram()
+        else:
+            exit()
 
         
 
@@ -611,7 +647,6 @@ def searchyoutube():
 
 def onlydownload():
     l=link()
-    print()
     resolution(l)
     q=vidcode(l)
     print()
