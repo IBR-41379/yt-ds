@@ -34,7 +34,7 @@ def dependency():
         pass
 
 def intro():
-    print("yt-ds\n(A script to make youtubedl simple)\nVersion: 0.3(beta)\n")
+    print("yt-ds\n(A script to make youtubedl simple)\nVersion: 0.35(beta)\n")
 
 
 intro()
@@ -144,7 +144,8 @@ def getresinfo(v):
         d=c.replace('\n','')
         e=d.split(',')
         h=e[0]
-        i=h.replace('          ',',')
+        mo=h.replace('  ',' ')
+        i=mo.replace('          ',',')
         j=i.replace('       ',',')
         m=j.replace('  ',',')
         n=m.replace(' ',',')
@@ -584,11 +585,26 @@ def downloader(a,b,c):
     res = json.loads(y)
     j=res['channel']
     k=j['name']
+    print('Do you want do download subtitles, if available(y/n)')
+    po=input('(Default==y)')
     print('Do you to make a new folder with the name of the youtube channel download video in that folder(y/n)')
     op=input('(Default==n):')
-    if op=='y':
-        try:
-            while True:
+    if po=='n':
+        if op=='y':
+            try:
+                while True:
+                    os.chdir(e+'/'+k)
+                    os.system('youtube-dl -f '+a+'+'+b+' '+c)
+                    print('Press y to go to main menu or any button to exit')
+                    inp=input(':')
+                    if inp == 'y':
+                        mainprogram()
+                    else:
+                        exit()
+        
+            except FileNotFoundError:
+                os.chdir(e)
+                os.mkdir(k)
                 os.chdir(e+'/'+k)
                 os.system('youtube-dl -f '+a+'+'+b+' '+c)
                 print('Press y to go to main menu or any button to exit')
@@ -597,11 +613,8 @@ def downloader(a,b,c):
                     mainprogram()
                 else:
                     exit()
-        
-        except FileNotFoundError:
+        else:
             os.chdir(e)
-            os.mkdir(k)
-            os.chdir(e+'/'+k)
             os.system('youtube-dl -f '+a+'+'+b+' '+c)
             print('Press y to go to main menu or any button to exit')
             inp=input(':')
@@ -609,17 +622,41 @@ def downloader(a,b,c):
                 mainprogram()
             else:
                 exit()
-    else:
-        os.chdir(e)
-        os.system('youtube-dl -f '+a+'+'+b+' '+c)
-        print('Press y to go to main menu or any button to exit')
-        inp=input(':')
-        if inp == 'y':
-            mainprogram()
-        else:
-            exit()
 
+    else:
+        if op=='y':
+            try:
+                while True:
+                    os.chdir(e+'/'+k)
+                    os.system('youtube-dl --write-srt --sub-lang en -f '+a+'+'+b+' '+c)
+                    print('Press y to go to main menu or any button to exit')
+                    inp=input(':')
+                    if inp == 'y':
+                        mainprogram()
+                    else:
+                        exit()
         
+            except FileNotFoundError:
+                os.chdir(e)
+                os.mkdir(k)
+                os.chdir(e+'/'+k)
+                os.system('youtube-dl --write-srt --sub-lang en -f '+a+'+'+b+' '+c)
+                print('Press y to go to main menu or any button to exit')
+                inp=input(':')
+                if inp == 'y':
+                    mainprogram()
+                else:
+                    exit()
+        else:
+            os.chdir(e)
+            os.system('youtube-dl --write-srt --sub-lang en -f '+a+'+'+b+' '+c)
+            print('Press y to go to main menu or any button to exit')
+            inp=input(':')
+            if inp == 'y':
+                mainprogram()
+            else:
+                exit()
+       
 
 def link():
     a=input('Enter youtube link :')
