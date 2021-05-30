@@ -1,16 +1,33 @@
 import os
 import json
+import glob
+import os.path
 #def is_tool(name):
     #"""Check whether `name` is on PATH and marked as executable."""
     ## from whichcraft import which
     #from shutil import which
    # return which(name) is not None
 
+def size_format(b):
+    if b < 1000:
+              return '%i' % b + 'B'
+    elif 1000 <= b < 1000000:
+        return '%.1f' % float(b/1000) + 'KB'
+    elif 1000000 <= b < 1000000000:
+        return '%.1f' % float(b/1000000) + 'MB'
+    elif 1000000000 <= b < 1000000000000:
+        return '%.1f' % float(b/1000000000) + 'GB'
+    elif 1000000000000 <= b:
+        return '%.1f' % float(b/1000000000000) + 'TB'
+
+
 def dependency():
     x=os.popen('pip3 list | grep youtube-dl')
     z=os.popen('pip3 list | grep youtube-search-python')
+    xz=os.popen('pip3 list | grep langcodes')
     w=z.readlines()
     v=x.readlines()
+    wv=xz.readlines()
 
     if len(v)==0:
         m=input("youtube-dl is missing from your system. Do you want to intsall it(y/n)")
@@ -24,7 +41,7 @@ def dependency():
     
 
     if len(w)==0:
-        m=input("youtube-search-python is missing from your system. Do you want to intsall it(y/n)")
+        m=input("youtube-search-python is missing from your system. Do you want to install it(y/n)")
         if m == "y":
             os.system("pip3 install --upgrade youtube-search-python")
         else:
@@ -33,8 +50,20 @@ def dependency():
     else:
         pass
 
+
+    if len(wv)==0:
+        m=input("langcodes is missing from your system. Do you want to intsall it(y/n)")
+        if m == "y":
+            os.system("pip3 install --upgrade langcodes")
+            os.system("pip3 install --upgrade language_data")
+        else:
+            print("Ok, closing program")
+            exit() 
+    else:
+        pass
+
 def intro():
-    print("yt-ds\n(A script to make youtubedl simple)\nVersion: 0.35(beta)\n")
+    print("yt-ds\n(A script to make youtubedl simple)\nVersion: 0.4(beta)\n")
 
 
 intro()
@@ -44,6 +73,13 @@ dependency()
 import youtubesearchpython
 from youtubesearchpython import VideosSearch
 from youtubesearchpython import *
+from youtube_dl import YoutubeDL
+from langcodes import *
+
+def vidaudinfoV2(m):
+    ydl = YoutubeDL()
+    info = ydl.extract_info(m, download=False)
+    return info
 
 
 def getvidinfo(v):
@@ -183,299 +219,27 @@ def getextenstioninfo(v):
         dict[key]=g
     return dict
 
-
-
-def resolution(m):
+def getvideoname(m):
     videoInfo = Video.getInfo(m, mode = ResultMode.json)
     x=videoInfo
     zeb=x.replace('\n','')
     ya=zeb.replace('    ','')
     res = json.loads(ya)
     j=res['title']
-    z=getvidinfo(m)
-    y=getsizeinfo(m)
-    n=getformatinfo(m)
-    s=getfpsinfo(m)
-    t=getresinfo(m)
-    u=getextenstioninfo(m)
-    print('\nVideo Name:',j)
-    print('\nAvailable resolutions are:')
-    for d in z:
-        if d=='160':
-            if d in y:
-                c=z.index('160')
-                print(c,' :  144p  ,',n.get(d),'     ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-            else:
-                c=z.index('160')
-                print(c,' :   144p  ,avc1.4d400c@  84k    ,30fps  ,mp4')
-        else:
-            pass
+    return j
 
-        if d=='278':
-            if d in y:
-                c=z.index('278')
-                print(c,' :  144p  ,',n.get(d),'             ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-            else:
-                c=z.index('278')
-                print(c,' : 144p  ,vp9@  85k            ,30fps  ,webm')
-            
-        else:
-            pass
-
-        if d=='394':
-            if d in y:
-                c=z.index('394')
-                print(c,' :  144p  ,',n.get(d),'   ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-            else:
-                c=z.index('394')
-                print(c,' : 144p  ,av01.0.00M.08@  97k  ,30fps  ,mp4')
-        else:
-            pass
-
-        if d=='330':
-            if d in y:
-                c=z.index(d)
-                print(c,' :144p HDR ,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-            else:
-                c=z.index(d)
-                print(c,' : 144p  ,av01.0.00M.08@  97k  ,30fps  ,mp4')
-        else:
-            pass
-
-
-        if d=='242':
-            if d in y:
-                c=z.index('242')
-                print(c,' : ',t.get(d),'  ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-            else:
-                c=z.index('242')
-                print(c,' : 240p  ,vp9@ 183k            ,30fps  ,webm')
-        else:
-            pass
-
-        if d=='133':
-            if d in y:
-                c=z.index('133')
-                print(c,' : ',t.get(d),'  ,',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-            else:    
-                c=z.index('133')
-                print(c,' : 240p  ,avc1.4d4015@ 103k    ,30fps  ,mp4')
-        else:
-            pass
-
-
-        if d=='395':
-            if d in y:
-                c=z.index('395')
-                print(c,' : ',t.get(d),'  ,',n.get(d),'  ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-            else:
-                c=z.index('395')
-                print(c,' : 240p  ,av01.0.00M.08@ 226k  ,30fps  ,mp4')
-        else:
-            pass
-
-        if d=='331':
-            if d in y:
-                c=z.index(d)
-                print(c,' :240p HDR ,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-            else:
-                c=z.index(d)
-                print(c,' : 240p  ,av01.0.00M.08@ 226k  ,30fps  ,mp4')
-        else:
-            pass
-
-        if d=='243':
-            if d in y:
-                c=z.index('243')
-                print(c,' : ',t.get(d),'  ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-            else:
-                c=z.index('243')
-                print(c,' : 360p  ,vp9@ 401k            ,30fps  ,webm')
-        else:
-            pass
-    
-        if d=='396':
-            c=z.index('396')
-            print(c,' : ',t.get(d),'  ,',n.get(d),'  ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='134':
-            c=z.index('134')
-            print(c,' : ',t.get(d),'  ,',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='332':
-            c=z.index(d)
-            print(c,' :360p HDR ,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='244':
-            c=z.index('244')
-            print(c,' : ',t.get(d),'  ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='397':
-            c=z.index('397')
-            print(c,': ',t.get(d),'  ,',n.get(d),'  ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='135':
-            c=z.index('135')
-            print(c,': ',t.get(d),'  ,',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='333':
-            c=z.index(d)
-            print(c,':480p HDR ,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-        
-        if d=='247':
-            c=z.index('247')
-            print(c,': ',t.get(d),'  ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:  
-            pass
-
-        if d=='136':
-            c=z.index('136')
-            print(c,': ',t.get(d),'  ,',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='334':
-            c=z.index(d)
-            print(c,':720p HDR ,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:  
-            pass
-
-        if d=='398':
-            c=z.index('398')
-            print(c,': ',t.get(d),' ,',n.get(d),'  ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='302':
-            c=z.index('302')
-            print(c,': ',t.get(d),' ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='298':
-            c=z.index('298')
-            print(c,': ',t.get(d),' ,',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-
-        if d=='399':
-            c=z.index('399')
-            print(c,': ',t.get(d),',',n.get(d),'  ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-
-        if d=='137':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='335':
-            c=z.index(d)
-            print(c,':1080p HDR,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='248':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='303':
-            c=z.index('303')
-            print(c,': ',t.get(d),',',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='299':
-            c=z.index('299')
-            print(c,': ',t.get(d),',',n.get(d),'    ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='271':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'            ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='336':
-            c=z.index(d)
-            print(c,':1440p HDR,',n.get(d),'         ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-
-        if d=='400':
-            c=z.index('400')
-            print(c,': ',t.get(d),',',n.get(d),' ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='308':
-            c=z.index('308')
-            print(c,': ',t.get(d),',',n.get(d),'           ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='313':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'           ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-
-        if d=='337':
-            c=z.index(d)
-            print(c,': 2160p HDR,',n.get(d),'        ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='401':
-            c=z.index('401')
-            print(c,': ',t.get(d),',',n.get(d),' ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='315':
-            c=z.index('315')
-            print(c,': ',t.get(d),',',n.get(d),'           ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='272':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'          ,',s.get(d),'  ,',u.get(d),' ,',y.get(d))
-        else:
-            pass
-
-        if d=='402':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'   ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-        if d=='571':
-            c=z.index(d)
-            print(c,': ',t.get(d),' ,',n.get(d),'   ,',s.get(d),'  ,',u.get(d),'  ,',y.get(d))
-        else:
-            pass
-
-    print(len(z),':  Back to main menu')
+def resolutionV2(m):
+    lol=vidaudinfoV2(m)
+    l=lol.get('formats')
+    v=len(l)
+    for i in range(4,v-2):
+        m=l[i]
+        ab=m.get('vcodec')+'@ '+str(m.get('vbr'))+'k'
+        #print(ab)
+        ba= "{:<28}".format(ab)
+        bab="{:<3}".format(str(i-3))
+        print(bab,':',m.get('format_note'),',',ba,',',m.get('fps'),'fps,',m.get('ext'),',',size_format(m.get('filesize')))
+    print(v-5,': Back to main menu')
 
 
 
@@ -520,142 +284,236 @@ def getaudformatinfo(v):
     return dict
 
 
-def audio(m):
-    z=getaudinfo(m)
-    y=getaudsizeinfo(m)
-    n=getaudformatinfo(m)
-    print('Choose audio format:')
-    
-    if '249' in z:
-        c=z.index('249')
-        print(c,': ',n.get('249'),'        , webm,',y.get('249'))
-    else:
-        pass
+def audioV2(m):
+    lol=vidaudinfoV2(m)
+    l=lol.get('formats')
+    v=len(l)
+    for i in range(4):
+        m=l[i]
+        ab=m.get('acodec')+'@ '+str(m.get('abr'))+'k'
+        #print(ab)
+        ba= "{:<28}".format(ab)
+        bab="{:<3}".format(str(i+1))
+        print(bab,':',ba,',',m.get('ext'),',',size_format(m.get('filesize')))
+    print(5,': Back to Video Resolution')
 
-    if '250' in z:
-        c=z.index('250')
-        print(c,': ',n.get('250'),'        , webm,',y.get('250'))
-    else:
-        pass
 
-    if '140' in z:
-        c=z.index('140')
-        print(c,': ',n.get('140'),'    , m4a ,',y.get('140'))
-    else:
-        pass
 
-    if '251' in z:
-        c=z.index('251')
-        print(c,': ',n.get('251'),'        , webm,',y.get('251'))
-    else:
-        pass
-    
-    print(len(z),':   Back to video resolution')
-
-def vidcode(m):
+def vidcodeV2(m):
     a=int(input("Enter the number to choose resolution or go back to previous page :"))
-    z=getvidinfo(m)
-    if a == len(z):
+    lol=vidaudinfoV2(m)
+    z=lol.get('formats')
+    if a == len(z)-5:
         mainprogram()
     else:
-        c=z[a]
-        return c
+        mo=z[a+3]
+        c=mo.get('format_id')
+    return c
 
-def audcode(m):
+
+
+def audcodeV2(m):
     a=int(input("Enter the number to choose audio fotmat or go back to previous page :"))
-    z=getaudinfo(m)
-    if a == len(z):
-        resolution(m)
-        q=vidcode(m)
+    lol=vidaudinfoV2(m)
+    z=lol.get('formats')
+    if a == 5:
+        resolutionV2(m)
+        q=vidcodeV2(m)
         print()
-        audio(m)
-        r=audcode(m)
+        audioV2(m)
+        r=audcodeV2(m)
         print()
         downloader(q,r,m)
     else:
-        c=z[a]
+        mo=z[a-1]
+        c=mo.get('format_id')
         return c
 
+
+def timestampinfo(m):
+    a=vidaudinfoV2(m)
+    sayan=a.get('title')
+    lab=m.split('/')
+    laba=len(lab)
+    lababa=lab[laba-1]
+    f = open(sayan+'-'+lababa+'.info.json','r')
+    data = json.loads(f.read())
+    g=data.get('chapters')
+    if g == None:
+        #os.system('rm -r "'+sayan+'-'+lababa+'.en.vtt"')
+        os.system('rm -r "'+sayan+'-'+lababa+'.info.json"')
+        os.system('rm -r "'+sayan+'-'+lababa+'.srt"')
+        print('Press y to go to main menu or any button to exit')
+        inp=input(':')
+        if inp == 'y':
+            mainprogram()
+        else:
+            exit()
+    else:
+        x=open('metadata','a')
+        y=';FFMETADATA1\ntitle='+sayan
+        x.write(y)
+        h=len(g)
+        for i in range(h):
+            j=g[i]
+            #st_len=len(str(j['start_time']))
+            start=str(j['start_time']*1000)
+            #start=st_time[0:st_len]
+            #en_len=len(str(j['end_time']))
+            end=str(j['end_time']*1000)
+            #end=en_time[0:en_len]
+            title=j['title']
+            z='\n\n[CHAPTER]\nTIMEBASE=1/1000\nSTART='+start+'\nEND='+end+'\ntitle='+title
+            x.write(z)
+        x.write('\n\n[STREAM]\ntitle='+sayan)
+        #return z
+        f.close()
+        x.close()
+        list_of_files =os.getcwd()+'/' 
+        latest_file = sorted(os.listdir(list_of_files),key=lambda p: os.path.getctime(os.path.join(list_of_files, p)))
+        t2 = "%s/%s" % (list_of_files, latest_file[-2])
+        mon=t2.replace('/',',')
+        nom=mon.split(',')
+        lennom=len(nom)
+        nomnom=nom[lennom-1]
+        #os.system('ffmpeg -i "'+sayan+'-'+lababa+'.en.vtt"'+' "'+sayan+'-'+lababa+'.srt"')
+        os.system('ffmpeg -i "'+nomnom+'" -i metadata -map_metadata 1 -codec copy "(Ch)'+nomnom+'"')
+        os.system('ffmpeg -i "(Ch)'+nomnom+'" -i "'+sayan+'-'+lababa+'.srt" -c copy -c:s mov_text "(chsub)'+nomnom+'"')
+        os.system('rm -r metadata')
+        
+        if os.path.isfile(os.getcwd()+'/'+'"'+sayan+'-'+lababa+'.srt"'):
+            os.system('rm -r "(Ch)'+nomnom+'"')
+        else:
+            pass
+        os.system('rm -r "'+nomnom+'"')
+        #os.system('ffmpeg -i "'+sayan+'-'+lababa+'.en.vtt"'+' "'+sayan+'-'+lababa+'.ass"')
+        #os.system('rm -r "'+sayan+'-'+lababa+'.en.vtt"')
+        #os.system('rm -r "'+sayan+'-'+lababa+'.srt"')
+        os.system('rm -r "'+sayan+'-'+lababa+'.srt"')
+        os.system('rm -r "'+sayan+'-'+lababa+'.info.json"')
+        print('Press y to go to main menu or any button to exit')
+        inp=input(':')
+        if inp == 'y':
+            mainprogram()
+        else:
+            exit()
+
+def presubinfo(m):
+    ca=vidaudinfoV2(m)
+    ma=ca.get('subtitles')
+    return ma
+
+def subtitleV2(m):
+    ma = presubinfo(m)
+    maaa=len(ma)
+    if ma == None:
+        pass
+    
+    elif maaa == 0:
+        pass
+
+    else:
+        am=ma.keys()
+        mam=list(am)
+        popo=len(mam)
+        for i in range(popo):
+            lan=Language.make(language=mam[i]).display_name()
+            #bhasa=lan.name
+            sata="{:<2}".format(str(i+1))
+            print(sata,':',lan)
+            #print(lan)
+        return mam
+
+def getsubinfo(m):
+    am=subtitleV2(m)
+    m=int(input("Enter your choice:"))
+    maa=m-1
+    lolu=am[maa]
+    return lolu
+
+
 def downloader(a,b,c):
+    luv=presubinfo(c)
     e=input("Enter download path :")
+    if luv==None:
+        po='n'
+    else:
+        print('Do you want do download subtitles(if onlu auto-sub is there,press n)(y/n)')
+        po=input('(Default==n):')
     videoInfo = Video.getInfo(c, mode = ResultMode.json)
     x=videoInfo
     z=x.replace('\n','')
     y=z.replace('    ','')
     res = json.loads(y)
+    suv=res['title']
+    lab=c.split('/')
+    laba=len(lab)
+    lababa=lab[laba-1]
     j=res['channel']
     k=j['name']
-    print('Do you want do download subtitles, if available(y/n)')
-    po=input('(Default==y)')
-    print('Do you to make a new folder with the name of the youtube channel download video in that folder(y/n)')
-    op=input('(Default==n):')
-    if po=='n':
+    
+    
+    if po=='y':
+        nihongo=getsubinfo(c)
+        print('Do you to make a new folder with the name of the youtube channel download video in that folder(y/n)')
+        op=input('(Default==n):')
         if op=='y':
             try:
                 while True:
                     os.chdir(e+'/'+k)
-                    os.system('youtube-dl -f '+a+'+'+b+' '+c)
-                    print('Press y to go to main menu or any button to exit')
-                    inp=input(':')
-                    if inp == 'y':
-                        mainprogram()
-                    else:
-                        exit()
+                    os.system('youtube-dl --write-info-json --write-srt --sub-lang '+nihongo+' -f '+a+'+'+b+' '+c)
+                   
         
             except FileNotFoundError:
                 os.chdir(e)
                 os.mkdir(k)
                 os.chdir(e+'/'+k)
-                os.system('youtube-dl -f '+a+'+'+b+' '+c)
-                print('Press y to go to main menu or any button to exit')
-                inp=input(':')
-                if inp == 'y':
-                    mainprogram()
-                else:
-                    exit()
+                os.system('youtube-dl --write-info-json --write-srt --sub-lang '+nihongo+' -f '+a+'+'+b+' '+c)
+               
         else:
             os.chdir(e)
-            os.system('youtube-dl -f '+a+'+'+b+' '+c)
-            print('Press y to go to main menu or any button to exit')
-            inp=input(':')
-            if inp == 'y':
-                mainprogram()
-            else:
-                exit()
+            os.system('youtube-dl --write-info-json --write-srt --sub-lang '+nihongo+' -f  '+a+'+'+b+' '+c)
+        list_of_files =os.getcwd()+'/' 
+        latest_file = sorted(os.listdir(list_of_files),key=lambda p: os.path.getctime(os.path.join(list_of_files, p)))
+        t2 = "%s/%s" % (list_of_files, latest_file[-1])
+        mon=t2.replace('/',',')
+        nom=mon.split(',')
+        lennom=len(nom)
+        nomnom=nom[lennom-1]
+        os.system('ffmpeg -i "'+suv+'-'+lababa+'.en.vtt"'+' "'+suv+'-'+lababa+'.srt"')
+        os.system('ffmpeg -i "'+nomnom+'" -i "'+suv+'-'+lababa+'.srt" -c copy -c:s mov_text "(yt)'+nomnom+'"')
+        os.system('rm -r "'+suv+'-'+lababa+'.en.vtt"')
+        #os.system('rm -r "'+suv+'-'+lababa+'.srt"')
+        os.system('rm -r "'+nomnom+'"')
 
+
+    
     else:
+        print('Do you to make a new folder with the name of the youtube channel download video in that folder(y/n)')
+        op=input('(Default==n):')
         if op=='y':
             try:
                 while True:
                     os.chdir(e+'/'+k)
-                    os.system('youtube-dl --write-srt --sub-lang en -f '+a+'+'+b+' '+c)
-                    print('Press y to go to main menu or any button to exit')
-                    inp=input(':')
-                    if inp == 'y':
-                        mainprogram()
-                    else:
-                        exit()
+                    os.system('youtube-dl --write-info-json -f '+a+'+'+b+' '+c)
+                    
         
             except FileNotFoundError:
                 os.chdir(e)
                 os.mkdir(k)
                 os.chdir(e+'/'+k)
-                os.system('youtube-dl --write-srt --sub-lang en -f '+a+'+'+b+' '+c)
-                print('Press y to go to main menu or any button to exit')
-                inp=input(':')
-                if inp == 'y':
-                    mainprogram()
-                else:
-                    exit()
+                os.system('youtube-dl --write-info-json -f '+a+'+'+b+' '+c)
+                
         else:
             os.chdir(e)
-            os.system('youtube-dl --write-srt --sub-lang en -f '+a+'+'+b+' '+c)
-            print('Press y to go to main menu or any button to exit')
-            inp=input(':')
-            if inp == 'y':
-                mainprogram()
-            else:
-                exit()
+            os.system('youtube-dl --write-info-json -f '+a+'+'+b+' '+c)
+
+        
+    timestampinfo(c)
+    #os.system('rm -r "'+suv+'-'+lababa+'.info.json"')
+    #hum=os.getcwd()
+    
+           
        
 
 def link():
@@ -684,11 +542,11 @@ def searchyoutube():
 
 def onlydownload():
     l=link()
-    resolution(l)
-    q=vidcode(l)
+    resolutionV2(l)
+    q=vidcodeV2(l)
     print()
-    audio(l)
-    r=audcode(l)
+    audioV2(l)
+    r=audcodeV2(l)
     print()
     downloader(q,r,l)
     #print('Press any button to exit')
@@ -698,11 +556,11 @@ def onlydownload():
 def searchdownload():
     l=searchyoutube()
     print()
-    resolution(l)
-    q=vidcode(l)
+    resolutionV2(l)
+    q=vidcodeV2(l)
     print()
-    audio(l)
-    r=audcode(l)
+    audioV2(l)
+    r=audcodeV2(l)
     print()
     downloader(q,r,l)
     #print('Press any button to exit')
